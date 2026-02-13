@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concert Privé de Tayc - Live Experience</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
+        rel="stylesheet">
+    <!-- Three.js & GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="background-overlay"></div>
+
+    <!-- Audio Element -->
+    <audio id="audio-player"></audio>
+
+    <div class="app-container">
+        <!-- 3D Scene Background -->
+        <div id="canvas-container"></div>
+
+        <div class="ui-layer">
+            <!-- Header -->
+            <header>
+                <div class="logo">TAYC <i class="fas fa-heart heart"></i> LIVE</div>
+                <h1>Concert Exclusif pour <span id="girl-name-span">Livia</span></h1>
+            </header>
+
+            <main>
+                <!-- Interactive Controls (Sidebar) -->
+                <div class="actions-sidebar">
+                    <div class="action-btn-container">
+                        <button class="glass-btn icon-only" id="camera-btn" title="Changer de Vue">
+                            <i class="fas fa-video"></i>
+                        </button>
+                        <span class="btn-label">Changer Vue</span>
+                    </div>
+
+                    <div class="action-btn-container">
+                        <button class="glass-btn icon-only" id="candle-btn" title="Mode Romantique">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <span class="btn-label">Ambiance</span>
+                    </div>
+
+                    <div class="action-btn-container">
+                        <button class="glass-btn icon-only" id="sparkle-btn" title="Pluie de Paillettes">
+                            <i class="fas fa-magic"></i>
+                        </button>
+                        <span class="btn-label">Magie</span>
+                    </div>
+
+                    <div class="action-btn-container">
+                        <button class="glass-btn icon-only" id="clap-btn" title="Applaudir">
+                            <i class="fas fa-hands-clapping"></i>
+                        </button>
+                        <span class="btn-label">Applaudir</span>
+                    </div>
+                </div>
+
+                <!-- Bouton pour afficher le message sur mobile -->
+                <button class="message-toggle-btn" id="message-toggle">
+                    💌 Message pour toi
+                </button>
+
+                <!-- Lyric/Message Area (Overlaid on 3D) -->
+                <div class="lyrics-overlay" id="lyrics-display">
+                    <p class="current-lyric">"Le concert va commencer..."</p>
+                </div>
+
+                <!-- Message Popup (Mobile) -->
+                <div class="message-popup" id="message-popup">
+                    <div class="message-popup-content">
+                        <button class="message-popup-close" id="message-popup-close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div id="popup-message-content">
+                            <!-- Message injecté via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Playlist -->
+                <section class="playlist-section glass-panel">
+                    <h3><i class="fas fa-list-music"></i> Setlist</h3>
+                    <div class="playlist-container" id="playlist">
+                        <!-- Songs injected via JS -->
+                    </div>
+                </section>
+
+                <!-- Personal Message -->
+                <section class="personal-message glass-panel" id="message-section">
+                    <h2 class="message-title">Pour Toi</h2>
+
+                    <!-- Galerie de photos de Livia -->
+                    <div class="livia-gallery">
+                        <div class="gallery-item">
+                            <img src="img/IMG-20251101-WA0165.jpg" alt="Livia" class="livia-photo">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="img/IMG-20260210-WA0056.jpg" alt="Livia" class="livia-photo">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="img/IMG-20260210-WA0057.jpg" alt="Livia" class="livia-photo">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="img/IMG-20260210-WA0058.jpg" alt="Livia" class="livia-photo">
+                        </div>
+                    </div>
+
+                    <div class="message-content" id="personal-message-content"></div>
+                    <div class="signature" id="signature"></div>
+                </section>
+            </main>
+
+            <!-- Footer -->
+            <footer>
+                <p>Concert Virtuel Tayc &copy; 2026 - Design by AXEL</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Sticky Player -->
+    <div class="player-controls">
+        <div class="player-inner">
+            <div class="progress-container">
+                <span class="time-display" id="time-display">0:00</span>
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <span class="time-display" id="duration-display">--:--</span>
+            </div>
+
+            <div class="controls-row">
+                <div class="now-playing">
+                    <div class="album-art" id="album-art">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <div class="track-info">
+                        <div class="track-title" id="now-playing-title">Sélectionnez un titre</div>
+                        <div class="track-artist" id="now-playing-artist">Tayc</div>
+                    </div>
+                </div>
+
+                <div class="main-controls">
+                    <button class="control-btn" id="prev-btn"><i class="fas fa-step-backward"></i></button>
+                    <button class="control-btn play-pause" id="play-btn"><i class="fas fa-play"></i></button>
+                    <button class="control-btn" id="next-btn"><i class="fas fa-step-forward"></i></button>
+                </div>
+
+                <div class="volume-control">
+                    <i class="fas fa-volume-down"></i>
+                    <input type="range" min="0" max="1" step="0.01" value="0.7" class="volume-slider"
+                        id="volume-slider">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script src="script.js"></script>
+</body>
+
+</html>
